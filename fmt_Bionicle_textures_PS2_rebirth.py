@@ -106,7 +106,7 @@ def Bio1LoadRGBA(data, texList):
 			newpal = bytearray(thepal)
 			bs.seek(off2raw, NOESEEK_ABS)
 
-			# 0x14: 16 color palette, 0x13: 256 palette, 0x00: No palette
+			# 0x14: 16 color palette, 0x13: 256 color palette, 0x00: No palette
 			
 			if bitDepth == 0x14:
 			    img = rapi.imageDecodeRawPal(bs.readBytes(width*height), newpal, width, height, 4, "r8g8b8a8")
@@ -120,7 +120,7 @@ def Bio1LoadRGBA(data, texList):
 
 		# Texture package headers
 		
-		if (Temp == 0x004F5124) or (Temp == 0x004F92E4) or (Temp == 0x004F722C) or (Temp == 0x004FF518):
+		if (Temp == 0x004F5124) or (Temp == 0x004F92E4) or (Temp == 0x004F722C) or (Temp == 0x004FF518) or (Temp == 0x004F61DC):
 			offset = bs.tell()
 			bs.seek(0x09, NOESEEK_REL)
 			palPosition = bs.readByte()
@@ -203,7 +203,7 @@ def Bio1LoadRGBA(data, texList):
 				newpal = bytearray(thepal)
 				bs.seek(off2tex + 0x20, NOESEEK_ABS)
 				
-				# 0x14: 16 color palette, 0x13: 256 palette, 0x00: No palette
+				# 0x14: 16 color palette, 0x13: 256 color palette, 0x00: No palette
 				
 				if bitDepth == 0x14:
                                   img = rapi.imageDecodeRawPal(bs.readBytes(width*height), newpal, width, height, 4, "r8g8b8a8")  
