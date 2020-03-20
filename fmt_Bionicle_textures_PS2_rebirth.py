@@ -30,23 +30,43 @@ def Bio1LoadRGBA(data, texList):
 		
 		# Texture headers
 		
-		if (Temp == 0x004F61C8) or (Temp == 0x004F8288) or (Temp == 0x004F5110) or (Temp == 0x004F9260) or (Temp == 0x004FD320) or (Temp == 0x004FF504) or (Temp == 0x004F7218) or (Temp == 0x00543B28) or (Temp == 0x004F8298) or (Temp == 0x004F8280) or (Temp == 0x004F92D0):
+		if (Temp == 0x004F61C8) or (Temp == 0x004F8288) or (Temp == 0x004F5110) or (Temp == 0x004F9260) or (Temp == 0x004FD320) or (Temp == 0x004FF504) or (Temp == 0x004F7218) or (Temp == 0x00543B28) or (Temp == 0x004F8298) or (Temp == 0x004F8280) or (Temp == 0x004F92D0) or (Temp == 0x00543B28) or (Temp == 0x004F5130):
 			offset = bs.tell()
 			bs.seek(0x09, NOESEEK_REL)
 			palPosition = bs.readByte()
 			bitDepth = bs.readByte()
-			bs.seek(0x19, NOESEEK_REL)
-			off2pal = bs.readInt()
-			bs.seek(0xC, NOESEEK_REL)
-			width = bs.readInt()
-			height = bs.readInt()
+			
+			# Accomdation for wad version 101
+			
+			if (Temp == 0x00543B28):
+			   bs.seek(0x5, NOESEEK_REL)
+			   off2pal = bs.readInt()
+			   bs.seek(0x18, NOESEEK_REL)
+			   width = bs.readInt()
+			   height = bs.readInt()
+			
+			else:
+			   bs.seek(0x19, NOESEEK_REL)
+			   off2pal = bs.readInt()
+			   bs.seek(0xC, NOESEEK_REL)
+			   width = bs.readInt()
+			   height = bs.readInt()
+			   
 			if (width > 2048) or (height > 2048):
 				continue
 			print (textcount)
 
 			print('Found a texture at {0}, width - {1}, height - {2}'.format(hex(offset - 0x4), width, height))
 			textcount+=1
-			bs.seek(0x30, NOESEEK_REL)
+			
+			# Accomdation for wad version 101
+			
+			if (Temp == 0x00543B28):
+                            bs.seek(0x28, NOESEEK_REL)
+                            
+			else:
+                            bs.seek(0x30, NOESEEK_REL)
+                            
 			off2raw = bs.tell()
 			bs.seek(off2pal, NOESEEK_ABS)
 			print('Found a palette at {0}'.format(hex(off2pal)))
@@ -120,7 +140,7 @@ def Bio1LoadRGBA(data, texList):
 
 		# Texture package headers
 		
-		if (Temp == 0x004F5124) or (Temp == 0x004F92E4) or (Temp == 0x004F722C) or (Temp == 0x004FF518) or (Temp == 0x004F61DC):
+		if (Temp == 0x004F5124) or (Temp == 0x004F92E4) or (Temp == 0x004F722C) or (Temp == 0x004FF518) or (Temp == 0x004F61DC) or (Temp == 0x004F829C):
 			offset = bs.tell()
 			bs.seek(0x09, NOESEEK_REL)
 			palPosition = bs.readByte()
