@@ -30,7 +30,7 @@ def Bio1LoadRGBA(data, texList):
 		
 		# Texture headers
 		
-		if (Temp == 0x004F61C8) or (Temp == 0x004F8288) or (Temp == 0x004F5110) or (Temp == 0x004F9260) or (Temp == 0x004FD320) or (Temp == 0x004FF504) or (Temp == 0x004F7218) or (Temp == 0x00543B28) or (Temp == 0x004F8298) or (Temp == 0x004F8280) or (Temp == 0x004F92D0) or (Temp == 0x00543B28) or (Temp == 0x004F5130):
+		if (Temp == 0x004F61C8) or (Temp == 0x004F8288) or (Temp == 0x004F5110) or (Temp == 0x004F9260) or (Temp == 0x004FD320) or (Temp == 0x004FF504) or (Temp == 0x004F7218) or (Temp == 0x00543B28) or (Temp == 0x004F8298) or (Temp == 0x004F8280) or (Temp == 0x004F92D0) or (Temp == 0x00543B28) or (Temp == 0x004F5130) or (Temp == 0x00567760):
 			offset = bs.tell()
 			bs.seek(0x09, NOESEEK_REL)
 			palPosition = bs.readByte()
@@ -48,7 +48,9 @@ def Bio1LoadRGBA(data, texList):
 			else:
 			   bs.seek(0x19, NOESEEK_REL)
 			   off2pal = bs.readInt()
-			   bs.seek(0xC, NOESEEK_REL)
+			   bs.seek(0x04, NOESEEK_REL)
+			   value1 = bs.readInt()
+			   value2 = bs.readInt()
 			   width = bs.readInt()
 			   height = bs.readInt()
 			   
@@ -127,11 +129,27 @@ def Bio1LoadRGBA(data, texList):
 			bs.seek(off2raw, NOESEEK_ABS)
 
 			# 0x14: 16 color palette, 0x13: 256 color palette, 0x00: No palette
+
+			# Accomdation for wad version 136 swizzling
 			
 			if bitDepth == 0x14:
-			    img = rapi.imageDecodeRawPal(bs.readBytes(width*height), newpal, width, height, 4, "r8g8b8a8")
+                           if (value1 != value2) and Temp == 0x00567760:
+                                  width = width*2
+                                  height = height*2
+                                  img = rapi.imageUntwiddlePS2(bs.readBytes(width*height*4), width, height,4)
+                                  img = rapi.imageDecodeRawPal(img, newpal, width, height, 4, "r8g8b8a8")
+                           else:
+                                  img = rapi.imageDecodeRawPal(bs.readBytes(width*height), newpal, width, height, 4, "r8g8b8a8")
+                           
 			if bitDepth == 0x13:
-			    img = rapi.imageDecodeRawPal(bs.readBytes(width*height), newpal, width, height, 8, "r8g8b8a8")
+                           if (value1 != value2) and Temp == 0x00567760:
+                                  width = width*2
+                                  height = height*2 
+                                  img = rapi.imageUntwiddlePS2(bs.readBytes(width*height*4), width, height,8)
+                                  img = rapi.imageDecodeRawPal(img, newpal, width, height, 8, "r8g8b8a8")
+                           else:
+                                  img = rapi.imageDecodeRawPal(bs.readBytes(width*height), newpal, width, height, 8, "r8g8b8a8")
+                              
 			if bitDepth == 0x00:
 			    img = rapi.imageDecodeRaw(bs.readBytes(width*height*4), width, height, "r8g8b8a8")
 			    
