@@ -41,7 +41,9 @@ def Bio1LoadRGBA(data, texList):
 			if (Temp == 0x00543B28):
 			   bs.seek(0x5, NOESEEK_REL)
 			   off2pal = bs.readInt()
-			   bs.seek(0x18, NOESEEK_REL)
+			   bs.seek(0x10, NOESEEK_REL)
+			   value1 = bs.readInt()
+			   value2 = bs.readInt()
 			   width = bs.readInt()
 			   height = bs.readInt()
 			
